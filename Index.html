@@ -58,11 +58,12 @@
     const labelC = document.getElementById("label-c");
     const inputC = document.getElementById("c");
 
-    // Oculta o muestra el coeficiente c según el tipo de ecuación
     tipoSelect.addEventListener("change", () => {
-      if (tipoSelect.value === "lineal") {
+      const tipo = tipoSelect.value;
+      if (tipo === "lineal") {
         labelC.style.display = "none";
         inputC.style.display = "none";
+        inputC.value = ""; // limpiar valor anterior
       } else {
         labelC.style.display = "block";
         inputC.style.display = "block";
@@ -73,34 +74,48 @@
       const tipo = document.getElementById("tipo").value;
       const a = parseFloat(document.getElementById("a").value);
       const b = parseFloat(document.getElementById("b").value);
-      const c = parseFloat(document.getElementById("c").value);
       const resultadoDiv = document.getElementById("resultado");
+
+      if (isNaN(a) || isNaN(b)) {
+        resultadoDiv.textContent = "Por favor, ingresa valores válidos para a y b.";
+        return;
+      }
 
       if (tipo === "lineal") {
         if (a === 0) {
-          resultadoDiv.textContent = b === 0 ? "Solución infinita (identidad)" : "No tiene solución";
+          resultadoDiv.textContent = b === 0 ? "Infinitas soluciones (identidad)" : "No tiene solución";
         } else {
           const x = -b / a;
           resultadoDiv.textContent = `Solución: x = ${x}`;
         }
       } else {
-        const discriminante = b * b - 4 * a * c;
+        const c = parseFloat(document.getElementById("c").value);
+
+        if (isNaN(c)) {
+          resultadoDiv.textContent = "Por favor, ingresa un valor válido para c.";
+          return;
+        }
+
         if (a === 0) {
           resultadoDiv.textContent = "No es una ecuación cuadrática (a no puede ser 0)";
-        } else if (discriminante > 0) {
-          const x1 = (-b + Math.sqrt(discriminante)) / (2 * a);
-          const x2 = (-b - Math.sqrt(discriminante)) / (2 * a);
-          resultadoDiv.textContent = `Dos soluciones reales: x₁ = ${x1}, x₂ = ${x2}`;
-        } else if (discriminante === 0) {
-          const x = -b / (2 * a);
-          resultadoDiv.textContent = `Una solución real: x = ${x}`;
         } else {
-          resultadoDiv.textContent = "No tiene soluciones reales (raíces complejas)";
+          const discriminante = b * b - 4 * a * c;
+
+          if (discriminante > 0) {
+            const x1 = (-b + Math.sqrt(discriminante)) / (2 * a);
+            const x2 = (-b - Math.sqrt(discriminante)) / (2 * a);
+            resultadoDiv.textContent = `Dos soluciones reales: x₁ = ${x1}, x₂ = ${x2}`;
+          } else if (discriminante === 0) {
+            const x = -b / (2 * a);
+            resultadoDiv.textContent = `Una solución real: x = ${x}`;
+          } else {
+            resultadoDiv.textContent = "No tiene soluciones reales (raíces complejas)";
+          }
         }
       }
     }
 
-    // Ocultar campo c por defecto si es lineal
+    // Iniciar con el campo c oculto si es lineal
     tipoSelect.dispatchEvent(new Event("change"));
   </script>
 
